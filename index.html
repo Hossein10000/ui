@@ -1,104 +1,240 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم Hermes Agent</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5; color: #333; direction: rtl; }
-        header { background-color: #0066cc; color: white; padding: 1rem; text-align: center; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 1.5rem; }
-        .card h2 { color: #0066cc; margin-bottom: 1rem; }
-        .status-item { display: flex; justify-content: space-between; margin: 0.5rem 0; padding: 0.5rem 0; border-bottom: 1px solid #eee; }
-        .status-item:last-child { border-bottom: none; }
-        .status-label { font-weight: bold; }
-        .status-value { font-weight: normal; }
-        .status-value.online { color: #28a745; }
-        .status-value.offline { color: #dc3545; }
-        .status-value.warning { color: #ffc107; }
-        footer { text-align: center; padding: 1rem; margin-top: 2rem; color: #666; font-size: 0.9rem; }
-        @media (max-width: 600px) {
-            .container { grid-template-columns: 1fr; }
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>لوحة تحكم Hermes Agent</h1>
-        <p>لوحة تحكم عربية متجاوبة لهاتف iPhone</p>
-    </header>
-    <div class="container">
-        <div class="card">
-            <h2>حالة النظام</h2>
-            <div class="status-item">
-                <span class="status-label">الحالة العامة:</span>
-                <span class="status-value online">Working</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">استخدام الذاكرة:</span>
-                <span class="status-value">45%</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">استخدام المعالج:</span>
-                <span class="status-value">23%</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">مساحة التخزين:</span>
-                <span class="status-value">62%</span>
-            </div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0d1117" />
+    <title>AgentHost UI Dashboard</title>
+    <meta
+      name="description"
+      content="لوحة تحكم عربية حديثة لـ AgentHost تضم الشات، صندوق الوارد، ملخص البنية، وحالة الخدمات."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">AH</span>
+          <div>
+            <p class="eyebrow">AgentHost Private UI</p>
+            <h1>لوحة القيادة التنفيذية</h1>
+          </div>
         </div>
-        <div class="card">
-            <h2>الخدمات النشطة</h2>
-            <div class="status-item">
-                <span class="status-label">النموذج المحلي:</span>
-                <span class="status-value online">متصل</span>
+
+        <nav class="top-actions" aria-label="روابط سريعة">
+          <a class="btn ghost" href="https://hermes.agenthost.tech/">هرمس</a>
+          <a class="btn ghost" href="https://agenthost.tech/">البوابة</a>
+          <a class="btn primary" href="#chat-panel">افتح الشات</a>
+        </nav>
+      </header>
+
+      <main class="layout">
+        <section class="hero card">
+          <div class="hero-copy">
+            <span class="pill live">جاهز للتشغيل</span>
+            <h2>واجهة عربية حديثة، مريحة على iPhone، ومبنية بالكود فقط</h2>
+            <p>
+              هذا التسليم يركز على الشات التنفيذي، صندوق النتائج والملفات، ومشهد
+              واضح للبنية والخدمات، بدون أي اعتماد على توليد صور من النماذج.
+            </p>
+
+            <div class="hero-actions">
+              <a class="btn primary" href="#inbox-panel">استعراض صندوق الوارد</a>
+              <a class="btn ghost" href="#workflow-panel">طريقة العمل</a>
             </div>
-            <div class="status-item">
-                <span class="status-label">قاعدة البيانات:</span>
-                <span class="status-value online">متصل</span>
+          </div>
+
+          <div class="hero-stats">
+            <article class="mini-stat">
+              <span class="label">الحالة</span>
+              <strong>Production Ready</strong>
+            </article>
+            <article class="mini-stat">
+              <span class="label">نمط الواجهة</span>
+              <strong>Arabic RTL / iPhone-first</strong>
+            </article>
+            <article class="mini-stat">
+              <span class="label">التسليم</span>
+              <strong>Static Frontend + Domain Route</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="status-grid">
+          <article class="card metric-card">
+            <span class="label">Hermes Agent</span>
+            <strong>متصل</strong>
+            <small>قيادة الأوركسترا والمهام</small>
+          </article>
+          <article class="card metric-card">
+            <span class="label">FreellmAPI</span>
+            <strong>جاهز</strong>
+            <small>Fallback للنماذج المجانية</small>
+          </article>
+          <article class="card metric-card">
+            <span class="label">SearXNG</span>
+            <strong>نشط</strong>
+            <small>بحث ميتا داخلي</small>
+          </article>
+          <article class="card metric-card">
+            <span class="label">Traefik + Authelia</span>
+            <strong>محمي</strong>
+            <small>ربط الدومين والحماية</small>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="card panel chat-panel" id="chat-panel">
+            <div class="panel-head">
+              <div>
+                <span class="eyebrow">Workspace</span>
+                <h3>ساحة الشات</h3>
+              </div>
+              <span class="pill soft">Hermes Session</span>
             </div>
-            <div class="status-item">
-                <span class="status-label">الشبكة:</span>
-                <span class="status-value online">متصل</span>
+
+            <div class="chat-thread">
+              <div class="bubble assistant">
+                <span class="who">Hermes</span>
+                <p>تم تجهيز البيئة، إصلاح GitHub، وربط التسليم بالدومين.</p>
+              </div>
+              <div class="bubble user">
+                <span class="who">أنت</span>
+                <p>أريد استلام المشروع النهائي مع تقرير كيف أنجز المهمة.</p>
+              </div>
+              <div class="bubble assistant">
+                <span class="who">Hermes</span>
+                <p>
+                  تم. الواجهة جاهزة، صندوق الوارد منظم، وربط المسار الإنتاجي تم
+                  عبر Traefik.
+                </p>
+              </div>
             </div>
-            <div class="status-item">
-                <span class="status-label">المراقبة:</span>
-                <span class="status-value online">نشط</span>
+
+            <form class="composer" onsubmit="return false;">
+              <label class="sr-only" for="prompt-input">رسالتك</label>
+              <textarea
+                id="prompt-input"
+                placeholder="اكتب طلبك هنا..."
+                rows="3"
+              ></textarea>
+              <div class="composer-actions">
+                <button class="btn ghost" type="button" id="attach-btn">
+                  إرفاق
+                </button>
+                <button class="btn primary" type="button" id="send-btn">
+                  إرسال
+                </button>
+              </div>
+            </form>
+          </article>
+
+          <article class="card panel inbox-panel" id="inbox-panel">
+            <div class="panel-head">
+              <div>
+                <span class="eyebrow">Inbox</span>
+                <h3>صندوق النتائج والملفات</h3>
+              </div>
+              <span class="pill soft">8 عناصر</span>
             </div>
-        </div>
-        <div class="card">
-            <h2>السجلات الأخيرة</h2>
-            <div style="height: 150px; overflow-y: auto; background: #f9f9f9; padding: 0.5rem; border-radius: 4px;">
-                <div class="status-item" style="border-bottom: none;">
-                    <span class="status-label">[10:30]</span>
-                    <span class="status-value">تم تشغيل النموذج بنجاح</span>
+
+            <div class="inbox-list">
+              <div class="file-card">
+                <div class="file-icon">📄</div>
+                <div class="file-body">
+                  <strong>تقرير دراسة البنية التحتية</strong>
+                  <span>مرسل من: Infra Agent</span>
+                  <small>PDF · قبل 8 دقائق</small>
                 </div>
-                <div class="status-item" style="border-bottom: none;">
-                    <span class="status-label">[10:29]</span>
-                    <span class="status-value">تم تحديث قاعدة البيانات</span>
+              </div>
+              <div class="file-card">
+                <div class="file-icon">🧾</div>
+                <div class="file-body">
+                  <strong>خطة تقسيم الوظائف والاتصالات</strong>
+                  <span>مرسل من: Architecture Agent</span>
+                  <small>Markdown · قبل 15 دقيقة</small>
                 </div>
-                <div class="status-item" style="border-bottom: none;">
-                    <span class="status-label">[10:28]</span>
-                    <span class="status-value warning">تحذير: استخدام الذاكرة مرتفع قليلاً</span>
+              </div>
+              <div class="file-card">
+                <div class="file-icon">🗂️</div>
+                <div class="file-body">
+                  <strong>نتائج فرز أقسام الكود</strong>
+                  <span>مرسل من: UI Planner</span>
+                  <small>ZIP · قبل 19 دقيقة</small>
                 </div>
-                <div class="status-item" style="border-bottom: none;">
-                    <span class="status-label">[10:27]</span>
-                    <span class="status-value">تم بدء خدمة المراقبة</span>
+              </div>
+              <div class="file-card">
+                <div class="file-icon">🛰️</div>
+                <div class="file-body">
+                  <strong>تحليل الدومين ومسارات الوصول</strong>
+                  <span>مرسل من: Domain Agent</span>
+                  <small>JSON · قبل 24 دقيقة</small>
                 </div>
+              </div>
             </div>
-        </div>
-        <div class="card">
-            <h2>الإجراءات السريعة</h2>
-            <button style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer;">إعادة تشغيل النموذج</button>
-            <button style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">تحديث القاعدة</button>
-            <button style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; background: #ffc107; color: #212529; border: none; border-radius: 4px; cursor: pointer;">مسح السجلات</button>
-            <button style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">إعادة تشغيل النظام</button>
-        </div>
+
+            <label class="upload-zone" for="upload-input">
+              <input id="upload-input" type="file" multiple hidden />
+              <span class="upload-title">اسحب ملفاتك هنا أو اضغط للرفع</span>
+              <small>يتم حفظ الملفات داخل صندوق الوارد المنظم حسب النوع والمرسل</small>
+            </label>
+          </article>
+
+          <article class="card panel architecture-panel" id="workflow-panel">
+            <div class="panel-head">
+              <div>
+                <span class="eyebrow">Execution Flow</span>
+                <h3>طريقة سير العمل</h3>
+              </div>
+            </div>
+
+            <ol class="flow-list">
+              <li>
+                <strong>Intake</strong>
+                <p>هرمس يفحص المطلوب ويقارن بين الموجود في GitHub والبنية الحية.</p>
+              </li>
+              <li>
+                <strong>Planning</strong>
+                <p>تقسيم المهمة إلى issues قابلة للتنفيذ مع labels وربطها بالمشروع.</p>
+              </li>
+              <li>
+                <strong>Execution</strong>
+                <p>تشغيل الأدوات المناسبة: terminal, GitHub, web, browser عند الحاجة.</p>
+              </li>
+              <li>
+                <strong>Verification</strong>
+                <p>فحص النتائج الفعلية على GitHub وعلى المسار الإنتاجي قبل الإنهاء.</p>
+              </li>
+            </ol>
+          </article>
+
+          <article class="card panel service-panel">
+            <div class="panel-head">
+              <div>
+                <span class="eyebrow">System Map</span>
+                <h3>الخدمات والاتصالات</h3>
+              </div>
+            </div>
+
+            <div class="service-map">
+              <span>Domain / Traefik</span>
+              <span>Authelia</span>
+              <span>Hermes</span>
+              <span>FreellmAPI</span>
+              <span>SearXNG</span>
+              <span>Results Inbox</span>
+            </div>
+
+            <div class="notes">
+              <p>المسار الإنتاجي الحالي: <code>agenthost.tech/ui/</code></p>
+              <p>المسار الاختياري لاحقًا بعد DNS: <code>ui.agenthost.tech</code></p>
+            </div>
+          </article>
+        </section>
+      </main>
     </div>
-    <footer>
-        © 2026 Hermes Agent - جميع الحقوق محفوظة
-    </footer>
-</body>
+
+    <script src="./app.js"></script>
+  </body>
 </html>

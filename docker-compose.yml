@@ -1,0 +1,23 @@
+services:
+  ui-dashboard:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    volumes:
+      - /root/ui:/usr/share/nginx/html:ro
+      - /root/ui/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik_default
+      - traefik.http.routers.ui-dashboard.rule=(Host(`agenthost.tech`) && PathPrefix(`/ui`)) || Host(`ui.agenthost.tech`)
+      - traefik.http.routers.ui-dashboard.entrypoints=websecure
+      - traefik.http.routers.ui-dashboard.tls.certresolver=letsencrypt
+      - traefik.http.routers.ui-dashboard.middlewares=authelia@docker,ui-dashboard-strip@docker
+      - traefik.http.routers.ui-dashboard.priority=140
+      - traefik.http.middlewares.ui-dashboard-strip.stripprefix.prefixes=/ui
+      - traefik.http.services.ui-dashboard.loadbalancer.server.port=8080
+    networks:
+      - traefik_default
+
+networks:
+  traefik_default:
+    external: true
