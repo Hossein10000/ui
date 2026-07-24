@@ -4,7 +4,7 @@
 
 `DEPLOYED — LOCAL UI VERIFICATION PASSED`
 
-The Product Reset is committed on branch `ui-product-reset-20260724` at commit `3d40097bd56f119b6d98b231d2b0e4e1e7830740`. The UI container was recreated only; Hermes, Qdrant, Honcho, Local Gateway, networks, and storage were not restarted or changed.
+The Product Reset is committed on branch `ui-product-reset-20260724` at commit `7cf762bfe85123a0d0303711cd98e6ecf189d38b`. The UI container was recreated only; Hermes, Qdrant, Honcho, Local Gateway, networks, and storage were not restarted or changed.
 
 ## Delivered
 
@@ -13,7 +13,9 @@ The Product Reset is committed on branch `ui-product-reset-20260724` at commit `
 - Real metrics, tasks, artifacts, events, service sources, and provenance.
 - Task search/filter/sort and task detail with real events and retry.
 - Artifact detail with task/run/source/provenance metadata.
+- File artifacts open through their real Inbox file URL when provided by the API.
 - Separate Hermes chat surface.
+- Hermes chat restores the existing session history through `/api/chat/history`.
 - Truthful Knowledge unavailable/empty state from the API source.
 - RTL mobile rules, touch-size minimums, focus states, reduced-motion support, and LTR identifier islands.
 
