@@ -36,8 +36,11 @@ The Product Reset is committed on branch `ui-product-reset-20260724` at commit `
 | UI restart count | 0 after recreate |
 | Chromium mobile interaction suite | 13/13 PASS |
 | UI-created acceptance task | completed; artifact created automatically |
+| UI failure and Retry acceptance | PASS; failed Run `run-c3bab6f38a1145f4`, retry Run `run-6aa654d30e26466d`, Artifact created |
 
 Chromium headless was available in the local Playwright cache and was used against the UI container. The mobile interaction suite passed 13/13 checks: RTL, 390×844 overflow, navigation, task search, Inbox search, task detail, Run detail, create-task dialog, Services, and truthful Knowledge empty state. A real task submitted through the UI completed as `task-fa33b5c781364b42`, run `run-9d0cc72663bb4a6c`, artifact `artifact-3f6ba0f4e46a4513`; the UI polling path updates the result without a manual refresh. Chromium measured `scrollWidth=390` at viewport width 390. Screenshots: `/tmp/agenthost-product-reset-mobile-fixed.png` and `/tmp/agenthost-product-reset-desktop-final.png`. The public URL remains protected by the existing authentication layer; this change does not weaken it. The next human check is to open `https://agenthost.tech/ui/` after authentication and confirm the same rendered view on the target iPhone.
+
+The safe failure path was also exercised through the UI context: Task `task-5d9e48c3b38f4d19` failed visibly, exposed Retry, and completed on a new Run with an automatically created Artifact. No Hermes service or routing was intentionally disrupted.
 
 ## Rollback
 
