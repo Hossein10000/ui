@@ -1,0 +1,30 @@
+services:
+  ui-dashboard:
+    image: python:3.12-slim
+    restart: unless-stopped
+    working_dir: /app
+    command: ["python", "/app/server.py"]
+    environment:
+      - PORT=8080
+      - RESULTS_DATA_DIR=/data
+      - API_SERVER_KEY=4e4d3f49e9000181d26a9f50ba10ab9afd206250125496672895923b71418f7d
+      - HERMES_UPSTREAM=http://hermes-agent-8yvs-hermes-agent-1:8642
+    volumes:
+      - /root/ui:/app
+      - /root/platform-gateway/results-data:/data
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik_default
+      - traefik.http.routers.ui-dashboard.rule=(Host(`agenthost.tech`) && PathPrefix(`/ui`)) || Host(`ui.agenthost.tech`)
+      - traefik.http.routers.ui-dashboard.entrypoints=websecure
+      - traefik.http.routers.ui-dashboard.tls.certresolver=letsencrypt
+      - traefik.http.routers.ui-dashboard.middlewares=authelia@docker,ui-dashboard-strip@docker
+      - traefik.http.routers.ui-dashboard.priority=140
+      - traefik.http.middlewares.ui-dashboard-strip.stripprefix.prefixes=/ui
+      - traefik.http.services.ui-dashboard.loadbalancer.server.port=8080
+    networks:
+      - traefik_default
+
+networks:
+  traefik_default:
+    external: true

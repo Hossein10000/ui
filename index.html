@@ -1,104 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم Hermes Agent</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5; color: #333; direction: rtl; }
-        header { background-color: #0066cc; color: white; padding: 1rem; text-align: center; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 1.5rem; }
-        .card h2 { color: #0066cc; margin-bottom: 1rem; }
-        .status-item { display: flex; justify-content: space-between; margin: 0.5rem 0; padding: 0.5rem 0; border-bottom: 1px solid #eee; }
-        .status-item:last-child { border-bottom: none; }
-        .status-label { font-weight: bold; }
-        .status-value { font-weight: normal; }
-        .status-value.online { color: #28a745; }
-        .status-value.offline { color: #dc3545; }
-        .status-value.warning { color: #ffc107; }
-        footer { text-align: center; padding: 1rem; margin-top: 2rem; color: #666; font-size: 0.9rem; }
-        @media (max-width: 600px) {
-            .container { grid-template-columns: 1fr; }
-        }
-    </style>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07111f"><title>AgentHost Command Center</title>
+  <link rel="stylesheet" href="./command-center.css">
 </head>
 <body>
-    <header>
-        <h1>لوحة تحكم Hermes Agent</h1>
-        <p>لوحة تحكم عربية متجاوبة لهاتف iPhone</p>
-    </header>
-    <div class="container">
-        <div class="card">
-            <h2>حالة النظام</h2>
-            <div class="status-item">
-                <span class="status-label">الحالة العامة:</span>
-                <span class="status-value online">Working</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">استخدام الذاكرة:</span>
-                <span class="status-value">45%</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">استخدام المعالج:</span>
-                <span class="status-value">23%</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">مساحة التخزين:</span>
-                <span class="status-value">62%</span>
-            </div>
-        </div>
-        <div class="card">
-            <h2>الخدمات النشطة</h2>
-            <div class="status-item">
-                <span class="status-label">النموذج المحلي:</span>
-                <span class="status-value online">متصل</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">قاعدة البيانات:</span>
-                <span class="status-value online">متصل</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">الشبكة:</span>
-                <span class="status-value online">متصل</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">المراقبة:</span>
-                <span class="status-value online">نشط</span>
-            </div>
-        </div>
-        <div class="card">
-            <h2>السجلات الأخيرة</h2>
-            <div style="height: 150px; overflow-y: auto; background: #f9f9f9; padding: 0.5rem; border-radius: 4px;">
-                <div class="status-item" style="border-bottom: none;">
-                    <span class="status-label">[10:30]</span>
-                    <span class="status-value">تم تشغيل النموذج بنجاح</span>
-                </div>
-                <div class="status-item" style="border-bottom: none;">
-                    <span class="status-label">[10:29]</span>
-                    <span class="status-value">تم تحديث قاعدة البيانات</span>
-                </div>
-                <div class="status-item" style="border-bottom: none;">
-                    <span class="status-label">[10:28]</span>
-                    <span class="status-value warning">تحذير: استخدام الذاكرة مرتفع قليلاً</span>
-                </div>
-                <div class="status-item" style="border-bottom: none;">
-                    <span class="status-label">[10:27]</span>
-                    <span class="status-value">تم بدء خدمة المراقبة</span>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <h2>الإجراءات السريعة</h2>
-            <button style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer;">إعادة تشغيل النموذج</button>
-            <button style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">تحديث القاعدة</button>
-            <button style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; background: #ffc107; color: #212529; border: none; border-radius: 4px; cursor: pointer;">مسح السجلات</button>
-            <button style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">إعادة تشغيل النظام</button>
-        </div>
-    </div>
-    <footer>
-        © 2026 Hermes Agent - جميع الحقوق محفوظة
-    </footer>
-</body>
-</html>
+<div class="cc-shell">
+  <aside class="cc-rail"><a class="cc-brand" href="#home"><b>AH</b><span>AgentHost<br><small>Command Center</small></span></a>
+    <nav><a class="cc-nav active" href="#home" data-panel="home">⌂ <span>الرئيسية</span></a><a class="cc-nav" href="#tasks" data-panel="tasks">✓ <span>المهام</span></a><a class="cc-nav" href="#inbox" data-panel="inbox">▣ <span>الوارد</span></a><a class="cc-nav" href="#chat" data-panel="chat">✦ <span>Hermes</span></a><a class="cc-nav" href="#more" data-panel="more">⋯ <span>المزيد</span></a></nav>
+    <div class="cc-rail-foot"><i></i><span>بيانات حقيقية فقط</span></div>
+  </aside>
+  <main class="cc-main">
+    <header class="cc-top"><div><span class="eyebrow">AGENTHOST / CONTROL</span><h1 id="page-title">مركز القيادة</h1></div><div class="cc-live" aria-live="polite"><i></i><span id="global-health">جارٍ التحقق</span></div></header>
+    <section class="cc-panel active" id="panel-home" data-panel-content="home"><div class="cc-hero"><div><span class="eyebrow">الحالة التشغيلية</span><h2>كل ما يدور حول وكيلك<br><em>في مكان واحد.</em></h2><p>مهام، نتائج، معرفة، وخدمات مرتبطة بمصادرها الفعلية.</p></div><button class="cc-primary" data-action="new-task">＋ مهمة جديدة</button></div>
+      <div class="cc-metrics" id="home-metrics"></div><div class="cc-grid"><section class="cc-card"><div class="cc-card-head"><div><span class="eyebrow">آخر المهام</span><h3>نشاط التنفيذ</h3></div><a href="#tasks" data-panel="tasks">عرض الكل</a></div><div id="home-tasks" class="cc-list"></div></section><section class="cc-card"><div class="cc-card-head"><div><span class="eyebrow">الوارد الموحد</span><h3>آخر النتائج</h3></div><a href="#inbox" data-panel="inbox">عرض الكل</a></div><div id="home-inbox" class="cc-list"></div></section></div><section class="cc-card"><div class="cc-card-head"><div><span class="eyebrow">الأحداث الحقيقية</span><h3>آخر النشاط</h3></div><span class="cc-source">/api/tasks + events</span></div><div id="home-events" class="cc-events"></div></section>
+    </section>
+    <section class="cc-panel" id="panel-tasks" data-panel-content="tasks"><div class="cc-section-head"><div><span class="eyebrow">TASKS</span><h2>المهام</h2></div><button class="cc-primary" data-action="new-task">＋ إنشاء مهمة</button></div><div class="cc-filters"><input id="tasks-search" class="cc-input" placeholder="ابحث في المهام..."/><select id="tasks-status" class="cc-input"><option value="">كل الحالات</option><option value="received">مستلمة</option><option value="running">قيد التنفيذ</option><option value="completed">مكتملة</option><option value="failed">فاشلة</option></select><select id="tasks-sort" class="cc-input"><option value="updated">الأحدث تحديثاً</option><option value="created">الأحدث إنشاءً</option><option value="title">العنوان</option></select></div><div id="tasks-list" class="cc-task-grid"></div></section>
+    <section class="cc-panel" id="panel-inbox" data-panel-content="inbox"><div class="cc-section-head"><div><span class="eyebrow">ARTIFACTS</span><h2>صندوق الوارد</h2></div><div class="cc-filters"><input id="inbox-search" class="cc-input" placeholder="ابحث في النتائج..." aria-label="البحث في الوارد"/><select id="inbox-type" class="cc-input" aria-label="تصفية نوع النتيجة"><option value="">كل الأنواع</option><option value="artifact">نتائج</option><option value="file">ملفات</option><option value="text/markdown">Markdown</option><option value="application/json">JSON</option></select></div></div><div id="inbox-list" class="cc-artifact-grid"></div></section>
+    <section class="cc-panel" id="panel-chat" data-panel-content="chat"><div class="cc-section-head"><div><span class="eyebrow">HERMES SESSION</span><h2>المحادثة</h2></div><span id="chat-state" class="cc-source" aria-live="polite">دردشة مستقلة عن المهام</span></div><div class="cc-chat"><div id="chat-thread" class="cc-chat-thread" aria-live="polite"></div><textarea id="chat-input" placeholder="اكتب رسالتك إلى Hermes..." aria-label="رسالة إلى Hermes"></textarea><button id="chat-send" class="cc-primary">إرسال</button></div></section>
+    <section class="cc-panel" id="panel-more" data-panel-content="more"><div class="cc-section-head"><div><span class="eyebrow">MORE</span><h2>المزيد</h2></div></div><div class="cc-more-grid"><button class="cc-more-card" data-panel="services"><b>◉</b><span>الخدمات والتكاملات</span><small>الحالة المثبتة من المصدر</small></button><button class="cc-more-card" data-panel="knowledge"><b>⌘</b><span>المعرفة</span><small>Vault والروابط المترابطة</small></button></div></section>
+    <section class="cc-panel" id="panel-knowledge" data-panel-content="knowledge"><div class="cc-section-head"><div><span class="eyebrow">KNOWLEDGE</span><h2>المعرفة المترابطة</h2></div><button class="cc-secondary" data-action="refresh">تحديث</button></div><div id="knowledge-state" class="cc-empty"></div></section>
+    <section class="cc-panel" id="panel-services" data-panel-content="services"><div class="cc-section-head"><div><span class="eyebrow">RUNTIME</span><h2>الخدمات</h2></div></div><div id="services-list" class="cc-service-grid"></div></section>
+  </main>
+</div>
+<dialog id="task-dialog" class="cc-dialog" aria-labelledby="task-dialog-title"><form method="dialog" id="task-form"><button class="cc-close" aria-label="إغلاق">×</button><span class="eyebrow">NEW TASK</span><h2 id="task-dialog-title">مهمة جديدة</h2><label for="task-title">العنوان<input id="task-title" required value="مهمة AgentHost"></label><label for="task-prompt">المطلوب<textarea id="task-prompt" rows="5" required></textarea></label><button class="cc-primary" type="submit">بدء التنفيذ</button></form></dialog>
+<dialog id="detail-dialog" class="cc-dialog"><form method="dialog"><button class="cc-close" aria-label="إغلاق">×</button><div id="detail-content"></div></form></dialog>
+<script src="./app.js"></script>
+</body></html>
