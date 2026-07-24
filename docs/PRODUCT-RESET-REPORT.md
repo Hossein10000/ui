@@ -45,4 +45,4 @@ Chromium headless was available in the local Playwright cache and was used again
 
 ## Scope note
 
-Pre-existing unrelated worktree entries `D nginx.conf` and `__pycache__/` were deliberately excluded from the Product Reset commit.
+The pre-existing `nginx.conf` deletion was preserved separately in Git stash `preserve pre-existing nginx deletion before product reset`; generated `__pycache__/` was removed. Neither is part of the Product Reset.
