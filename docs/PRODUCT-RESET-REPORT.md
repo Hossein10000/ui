@@ -4,7 +4,7 @@
 
 `DEPLOYED — LOCAL UI VERIFICATION PASSED`
 
-The Product Reset is committed on branch `ui-product-reset-20260724` at commit `347d69d5cc81482e4f975f0f2c496e102fc8a9fd`. The UI container was recreated only; Hermes, Qdrant, Honcho, Local Gateway, networks, and storage were not restarted or changed.
+The Product Reset is committed on branch `ui-product-reset-20260724` at commit `3d40097bd56f119b6d98b231d2b0e4e1e7830740`. The UI container was recreated only; Hermes, Qdrant, Honcho, Local Gateway, networks, and storage were not restarted or changed.
 
 ## Delivered
 
@@ -32,8 +32,10 @@ The Product Reset is committed on branch `ui-product-reset-20260724` at commit `
 | `/api/inbox` | HTTP 200 |
 | `/api/knowledge/graph` | HTTP 200; unavailable state preserved truthfully |
 | UI restart count | 0 after recreate |
+| Chromium mobile interaction suite | 13/13 PASS |
+| UI-created acceptance task | completed; artifact created automatically |
 
-The current environment has no Chromium, Playwright, or Selenium executable, so pixel screenshots and touch automation were not generated locally. The public URL remains protected by the existing authentication layer; this change does not weaken it. The next human check is to open `https://agenthost.tech/ui/` after authentication and perform one real task submission.
+Chromium headless was available in the local Playwright cache and was used against the UI container. The mobile interaction suite passed 13/13 checks: RTL, 390×844 overflow, navigation, task search, Inbox search, task detail, Run detail, create-task dialog, Services, and truthful Knowledge empty state. A real task submitted through the UI completed as `task-fa33b5c781364b42`, run `run-9d0cc72663bb4a6c`, artifact `artifact-3f6ba0f4e46a4513`; the UI polling path updates the result without a manual refresh. Chromium measured `scrollWidth=390` at viewport width 390. Screenshots: `/tmp/agenthost-product-reset-mobile-fixed.png` and `/tmp/agenthost-product-reset-desktop-final.png`. The public URL remains protected by the existing authentication layer; this change does not weaken it. The next human check is to open `https://agenthost.tech/ui/` after authentication and confirm the same rendered view on the target iPhone.
 
 ## Rollback
 
