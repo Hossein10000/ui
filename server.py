@@ -3,7 +3,9 @@ import json
 import mimetypes
 import os
 import re
+import threading
 import time
+import uuid
 import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -25,15 +27,220 @@ MAX_ITEMS = 100
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024
 MAX_CHAT_CHARS = 12000
 UI_BUILD = "vertical-slice-20260724-1"
+WORKFLOW_ROOT = DATA_ROOT / "workflows"
+TASKS_DIR = WORKFLOW_ROOT / "tasks"
+RUNS_DIR = WORKFLOW_ROOT / "runs"
+EVENTS_DIR = WORKFLOW_ROOT / "events"
+ARTIFACTS_DIR = WORKFLOW_ROOT / "artifacts"
+WORKFLOW_LOCK = threading.RLock()
 
 ITEMS_DIR.mkdir(parents=True, exist_ok=True)
 FILES_DIR.mkdir(parents=True, exist_ok=True)
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 UPLOAD_META_DIR.mkdir(parents=True, exist_ok=True)
+for _directory in (TASKS_DIR, RUNS_DIR, EVENTS_DIR, ARTIFACTS_DIR):
+    _directory.mkdir(parents=True, exist_ok=True)
 
 
 def _json_bytes(payload) -> bytes:
     return json.dumps(payload, ensure_ascii=False).encode("utf-8")
+
+
+def _now() -> str:
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+
+def _new_id(prefix: str) -> str:
+    return f"{prefix}-{uuid.uuid4().hex[:16]}"
+
+
+def _atomic_json(path: Path, payload: dict) -> None:
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temporary.replace(path)
+
+
+def _load_json(path: Path) -> dict | None:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        return payload if isinstance(payload, dict) else None
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def _persist(directory: Path, identifier: str, payload: dict) -> None:
+    with WORKFLOW_LOCK:
+        _atomic_json(directory / f"{identifier}.json", payload)
+
+
+def _append_event(run_id: str, task_id: str, event_type: str, status: str, message: str, metadata: dict | None = None) -> dict:
+    event = {
+        "id": _new_id("event"),
+        "run_id": run_id,
+        "task_id": task_id,
+        "event_type": event_type,
+        "status": status,
+        "timestamp": _now(),
+        "source": "ui-dashboard",
+        "message": message[:500],
+        "metadata": metadata or {},
+    }
+    path = EVENTS_DIR / f"{run_id}.jsonl"
+    with WORKFLOW_LOCK:
+        with path.open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(event, ensure_ascii=False) + "\n")
+    return event
+
+
+def _read_events(run_id: str) -> list[dict]:
+    path = EVENTS_DIR / f"{run_id}.jsonl"
+    if not path.is_file():
+        return []
+    events = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        try:
+            item = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(item, dict):
+            events.append(item)
+    return events
+
+
+def _update_task(task_id: str, **changes) -> dict | None:
+    path = TASKS_DIR / f"{task_id}.json"
+    task = _load_json(path)
+    if task is None:
+        return None
+    task.update(changes)
+    task["updated_at"] = _now()
+    _persist(TASKS_DIR, task_id, task)
+    return task
+
+
+def _update_run(run_id: str, **changes) -> dict | None:
+    path = RUNS_DIR / f"{run_id}.json"
+    run = _load_json(path)
+    if run is None:
+        return None
+    run.update(changes)
+    _persist(RUNS_DIR, run_id, run)
+    return run
+
+
+def _task_artifact(task_id: str, run_id: str, content: str, conversation_id: str, title: str) -> dict:
+    artifact_id = _new_id("artifact")
+    artifact = {
+        "id": artifact_id,
+        "task_id": task_id,
+        "run_id": run_id,
+        "conversation_id": conversation_id,
+        "title": title[:200],
+        "mime_type": "text/markdown",
+        "storage_path": str(ARTIFACTS_DIR / f"{artifact_id}.json"),
+        "source_type": "hermes-session-api",
+        "source_id": conversation_id,
+        "created_at": _now(),
+        "summary": content[:300],
+        "content": content,
+        "metadata": {"execution": "Hermes Session API", "response_captured": True},
+        "health_state": "observed",
+        "data_origin": "ui-workflow-run",
+        "last_verified_at": _now(),
+    }
+    _persist(ARTIFACTS_DIR, artifact_id, artifact)
+    inbox_item = {
+        "id": artifact_id,
+        "created_at": artifact["created_at"],
+        "service": "hermes-workflow",
+        "title": artifact["title"],
+        "type": "artifact",
+        "tags": ["artifact", "workflow", task_id, run_id],
+        "content": content,
+        "artifact_id": artifact_id,
+        "task_id": task_id,
+        "run_id": run_id,
+        "conversation_id": conversation_id,
+        "kind": "result",
+        "source_type": artifact["source_type"],
+        "source_id": artifact["source_id"],
+        "last_verified_at": artifact["last_verified_at"],
+        "health_state": "observed",
+        "data_origin": artifact["data_origin"],
+    }
+    _persist(ITEMS_DIR, artifact_id, inbox_item)
+    return artifact
+
+
+def _run_task(task_id: str, run_id: str, failure_mode: str = "") -> None:
+    task = _load_json(TASKS_DIR / f"{task_id}.json") or {}
+    conversation_id = task.get("conversation_id", "")
+    _update_task(task_id, status="planning")
+    _append_event(run_id, task_id, "task.planning", "planning", "Task accepted and prepared")
+    _update_task(task_id, status="running")
+    _update_run(run_id, status="running", started_at=_now())
+    _append_event(run_id, task_id, "run.started", "running", "Hermes Session API request started", {"profile": task.get("profile", "default")})
+    try:
+        if failure_mode == "hermes-unreachable":
+            _hermes_request("/api/__vertical_slice_test_failure__")
+        else:
+            _ensure_session(conversation_id)
+            response = _hermes_request(
+                f"/api/sessions/{quote(conversation_id)}/chat",
+                {"message": task.get("prompt", "")},
+                method="POST",
+                session_id=conversation_id,
+            )
+        reply = (((response.get("message") or {}).get("content")) or "").strip()
+        if not reply:
+            raise RuntimeError("Hermes returned an empty response")
+        _append_event(run_id, task_id, "hermes.response", "running", "Hermes response captured", {"response_received": True})
+        artifact = _task_artifact(task_id, run_id, reply, conversation_id, task.get("title", "Hermes task result"))
+        _append_event(run_id, task_id, "artifact.created", "running", "Artifact normalized and added to Inbox", {"artifact_id": artifact["id"]})
+        _update_run(run_id, status="completed", completed_at=_now(), error=None, execution_metadata={"response_received": True})
+        _update_task(task_id, status="completed", active_run_id=run_id, artifact_id=artifact["id"])
+        _append_event(run_id, task_id, "run.completed", "completed", "Run completed successfully", {"artifact_id": artifact["id"]})
+    except Exception as exc:
+        safe_error = str(exc).replace(API_SERVER_KEY, "[REDACTED]")[:500]
+        _update_run(run_id, status="failed", completed_at=_now(), error=safe_error, execution_metadata={"response_received": False})
+        _update_task(task_id, status="failed", active_run_id=run_id, error=safe_error)
+        _append_event(run_id, task_id, "run.failed", "failed", "Run failed", {"error": safe_error})
+
+
+def _start_task(payload: dict, failure_mode: str = "", task_id: str | None = None) -> tuple[dict, dict]:
+    task_id = task_id or _new_id("task")
+    run_id = _new_id("run")
+    conversation_id = f"{SESSION_PREFIX}_{_safe_user(payload.get('user', 'owner'))}"
+    now = _now()
+    task = {
+        "id": task_id,
+        "title": str(payload.get("title") or "AgentHost task")[:200],
+        "prompt": str(payload.get("prompt") or "").strip()[:MAX_CHAT_CHARS],
+        "status": "received",
+        "created_at": now,
+        "updated_at": now,
+        "project_reference": payload.get("project_reference"),
+        "conversation_id": conversation_id,
+        "active_run_id": run_id,
+        "profile": str(payload.get("profile") or "default")[:40],
+    }
+    run = {
+        "id": run_id,
+        "task_id": task_id,
+        "external_run_id": None,
+        "profile": task["profile"],
+        "status": "received",
+        "started_at": None,
+        "completed_at": None,
+        "error": None,
+        "execution_metadata": {"transport": "Hermes Session API", "conversation_id": conversation_id},
+    }
+    _persist(TASKS_DIR, task_id, task)
+    _persist(RUNS_DIR, run_id, run)
+    _append_event(run_id, task_id, "task.received", "received", "Task received from UI")
+    thread = threading.Thread(target=_run_task, args=(task_id, run_id, failure_mode), daemon=True)
+    thread.start()
+    return task, run
 
 
 def _safe_user(value: str) -> str:
@@ -285,6 +492,46 @@ class Handler(BaseHTTPRequestHandler):
                 "edges": [],
             })
             return
+        if path in ("/api/tasks", "/api/tasks/"):
+            tasks = []
+            for task_path in sorted(TASKS_DIR.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True):
+                task = _load_json(task_path)
+                if task:
+                    tasks.append(task)
+            self._send_json({"tasks": tasks[:MAX_ITEMS], "data_origin": "ui-workflow-storage"})
+            return
+        if path.startswith("/api/tasks/"):
+            tail = path.removeprefix("/api/tasks/").strip("/")
+            if tail.endswith("/retry"):
+                self._send_json({"error": "method_not_allowed"}, 405)
+                return
+            task = _load_json(TASKS_DIR / f"{tail}.json")
+            if task is None:
+                self._send_json({"error": "not_found"}, 404)
+                return
+            run = _load_json(RUNS_DIR / f"{task.get('active_run_id', '')}.json") if task.get("active_run_id") else None
+            self._send_json({"task": task, "run": run, "events": _read_events(task.get("active_run_id", ""))})
+            return
+        if path.startswith("/api/runs/") and path.endswith("/events"):
+            run_id = path.removeprefix("/api/runs/").removesuffix("/events").strip("/")
+            self._send_json({"run_id": run_id, "events": _read_events(run_id)})
+            return
+        if path.startswith("/api/runs/"):
+            run_id = path.removeprefix("/api/runs/").strip("/")
+            run = _load_json(RUNS_DIR / f"{run_id}.json")
+            if run is None:
+                self._send_json({"error": "not_found"}, 404)
+                return
+            self._send_json({"run": run, "events": _read_events(run_id)})
+            return
+        if path.startswith("/api/artifacts/"):
+            artifact_id = Path(path.removeprefix("/api/artifacts/")).name
+            artifact = _load_json(ARTIFACTS_DIR / f"{artifact_id}.json")
+            if artifact is None:
+                self._send_json({"error": "not_found"}, 404)
+                return
+            self._send_json(artifact)
+            return
         if path in ("/api/inbox", "/api/inbox/"):
             query = parse_qs(parsed.query)
             try:
@@ -360,6 +607,33 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         parsed = urlparse(self.path)
         path = parsed.path
+        if path == "/api/tasks":
+            payload = self._read_json()
+            if payload is None:
+                return
+            prompt = str(payload.get("prompt") or "").strip()
+            if not prompt:
+                self._send_json({"error": "prompt_required"}, 400)
+                return
+            failure_mode = ""
+            if self.headers.get("X-UI-Test-Failure") == "hermes-unreachable":
+                failure_mode = "hermes-unreachable"
+            task, run = _start_task(payload, failure_mode)
+            self._send_json({"ok": True, "task": task, "run": run}, 202)
+            return
+        if path.startswith("/api/tasks/") and path.endswith("/retry"):
+            task_id = path.removeprefix("/api/tasks/").removesuffix("/retry").strip("/")
+            task = _load_json(TASKS_DIR / f"{task_id}.json")
+            if task is None:
+                self._send_json({"error": "not_found"}, 404)
+                return
+            payload = {"title": task.get("title"), "prompt": task.get("prompt"), "profile": task.get("profile"), "user": "owner"}
+            retry_task, retry_run = _start_task(payload, task_id=task_id)
+            retry_task["created_at"] = task.get("created_at", retry_task["created_at"])
+            retry_task["project_reference"] = task.get("project_reference")
+            _persist(TASKS_DIR, task_id, retry_task)
+            self._send_json({"ok": True, "task": retry_task, "run": retry_run}, 202)
+            return
         if path == "/api/chat":
             payload = self._read_json()
             if payload is None:

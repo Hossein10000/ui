@@ -7,6 +7,7 @@
     <title>مركز قيادة AgentHost</title>
     <meta name="description" content="مركز قيادة عربي متصل بـ Hermes لإدارة الشات والملفات والمهام." />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./workflow.css" />
   </head>
   <body>
     <div class="app-shell">
@@ -78,7 +79,16 @@
         </section>
 
         <section class="lower-grid">
-          <article class="surface flow-surface" id="workflow-panel"><div class="surface-head"><div><p class="section-kicker">سير التنفيذ</p><h2>من الطلب إلى النتيجة</h2></div><span class="muted-label">مراقبة مباشرة</span></div><div class="timeline"><div class="timeline-step done"><span>01</span><div><strong>استقبال الطلب</strong><small>فهم المطلوب وتحديد النطاق</small></div></div><div class="timeline-step done"><span>02</span><div><strong>التخطيط والتفويض</strong><small>اختيار الأدوات والوكلاء</small></div></div><div class="timeline-step current"><span>03</span><div><strong>التنفيذ</strong><small>Hermes يدير المهمة الآن</small></div></div><div class="timeline-step"><span>04</span><div><strong>المراجعة والتسليم</strong><small>التحقق من النتيجة الفعلية</small></div></div></div></article>
+          <article class="surface flow-surface" id="workflow-panel">
+            <div class="surface-head"><div><p class="section-kicker">سير التنفيذ</p><h2>من الطلب إلى النتيجة</h2></div><span class="muted-label" id="workflow-state">لا توجد مهمة نشطة</span></div>
+            <form class="task-form" id="task-form">
+              <label for="task-title">عنوان المهمة</label><input id="task-title" name="title" value="تقرير حالة AgentHost" maxlength="200" />
+              <label for="task-prompt">المطلوب</label><textarea id="task-prompt" name="prompt" rows="3" required>أنشئ تقريراً قصيراً عن حالة خدمات AgentHost الحالية واحفظ النتيجة في صندوق الوارد.</textarea>
+              <button class="send-button" type="submit">تنفيذ المهمة <span>←</span></button>
+            </form>
+            <div class="timeline" id="workflow-timeline"><p class="muted-label">أرسل مهمة لعرض الأحداث الحقيقية.</p></div>
+            <div class="task-result" id="task-result" hidden></div>
+          </article>
           <article class="surface architecture-surface"><div class="surface-head"><div><p class="section-kicker">البنية المتصلة</p><h2>خريطة الخدمات</h2></div><span class="muted-label">6 خدمات</span></div><div class="service-list"><div><i class="service-dot green"></i><span>Hermes Agent</span><small>8642 · API داخلي</small><b>سليم</b></div><div><i class="service-dot blue"></i><span>FreeLLM Gateway</span><small>3001 · fallback</small><b>سليم</b></div><div><i class="service-dot violet"></i><span>SearXNG</span><small>8888 · بحث داخلي</small><b>سليم</b></div><div><i class="service-dot orange"></i><span>Traefik + Authelia</span><small>الدومين · محمي</small><b>سليم</b></div></div></article>
         </section>
       </main>

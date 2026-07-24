@@ -21,6 +21,10 @@
   const itemDialogTitle = document.getElementById("item-dialog-title");
   const itemDialogBody = document.getElementById("item-dialog-body");
   const itemDialogClose = document.getElementById("item-dialog-close");
+  const taskForm = document.getElementById("task-form");
+  const workflowState = document.getElementById("workflow-state");
+  const workflowTimeline = document.getElementById("workflow-timeline");
+  const taskResult = document.getElementById("task-result");
   let inboxItems = [];
   let activeInboxFilter = "all";
 
@@ -30,6 +34,66 @@
     bindEvents();
     loadInbox();
     loadChatHistory();
+    if (taskForm) taskForm.addEventListener("submit", submitTask);
+  }
+
+  async function submitTask(event) {
+    event.preventDefault();
+    const title = document.getElementById("task-title")?.value.trim();
+    const prompt = document.getElementById("task-prompt")?.value.trim();
+    if (!prompt) return;
+    const button = taskForm.querySelector("button[type=submit]");
+    if (button) button.disabled = true;
+    try {
+      const resp = await fetch(apiUrl("/api/tasks"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, prompt }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+      workflowState.textContent = `قيد التنفيذ · ${data.task.id}`;
+      await pollTask(data.task.id);
+    } catch (error) {
+      workflowState.textContent = `فشل بدء المهمة: ${error.message}`;
+    } finally {
+      if (button) button.disabled = false;
+    }
+  }
+
+  async function pollTask(taskId) {
+    for (let attempt = 0; attempt < 120; attempt += 1) {
+      const resp = await fetch(apiUrl(`/api/tasks/${encodeURIComponent(taskId)}`), { cache: "no-store" });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+      renderWorkflow(data);
+      if (["completed", "failed", "cancelled"].includes(data.task.status)) {
+        await loadInbox();
+        return data;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+    throw new Error("انتهت مهلة متابعة المهمة");
+  }
+
+  function renderWorkflow(data) {
+    if (workflowState) workflowState.textContent = `${data.task.status} · ${data.task.id}`;
+    if (workflowTimeline) {
+      workflowTimeline.innerHTML = (data.events || []).map((event, index) => `
+        <div class="timeline-step ${event.status === "completed" ? "done" : event.status === "running" ? "current" : ""}">
+          <span>${String(index + 1).padStart(2, "0")}</span>
+          <div><strong>${escapeHtml(event.event_type)}</strong><small>${escapeHtml(event.timestamp)} · ${escapeHtml(event.source)}<br>${escapeHtml(event.message)}</small></div>
+        </div>
+      `).join("") || `<p class="muted-label">لا توجد أحداث مسجلة.</p>`;
+    }
+    if (!taskResult) return;
+    if (data.task.status === "completed" && data.task.artifact_id) {
+      taskResult.hidden = false;
+      taskResult.innerHTML = `<a class="btn ghost" href="${apiUrl(`/api/artifacts/${encodeURIComponent(data.task.artifact_id)}`)}" target="_blank" rel="noopener noreferrer">فتح Artifact ${escapeHtml(data.task.artifact_id)}</a>`;
+    } else if (data.task.status === "failed") {
+      taskResult.hidden = false;
+      taskResult.textContent = `فشل التنفيذ: ${data.task.error || "خطأ غير محدد"}`;
+    }
   }
 
   function bindEvents() {
