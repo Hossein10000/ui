@@ -1,99 +1,29 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#07111f" />
-    <title>مركز قيادة AgentHost</title>
-    <meta name="description" content="مركز قيادة عربي متصل بـ Hermes لإدارة الشات والملفات والمهام." />
-    <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./workflow.css" />
-  </head>
-  <body>
-    <div class="app-shell">
-      <aside class="side-rail" aria-label="التنقل الرئيسي">
-        <div class="logo-mark"><span>AH</span><i></i></div>
-        <div class="rail-label">مركز<br />القيادة</div>
-        <nav class="rail-nav">
-          <a class="rail-link active" href="#overview"><span class="rail-icon">⌂</span><span>نظرة عامة</span></a>
-          <a class="rail-link" href="#chat-panel"><span class="rail-icon">✦</span><span>Hermes</span></a>
-          <a class="rail-link" href="#inbox-panel"><span class="rail-icon">▣</span><span>الوارد</span></a>
-          <a class="rail-link" href="#workflow-panel"><span class="rail-icon">⌁</span><span>التدفق</span></a>
-        </nav>
-        <div class="rail-foot"><span class="online-dot"></span><span>النظام يعمل</span></div>
-      </aside>
-
-      <main class="main-stage" id="overview">
-        <header class="topbar">
-          <div class="crumbs"><span>مساحة العمل</span><b>/</b><strong>مركز القيادة</strong></div>
-          <div class="topbar-actions">
-            <span class="live-badge"><i></i> متصل الآن</span>
-            <a class="icon-button" href="https://hermes.agenthost.tech/" aria-label="فتح Hermes">↗</a>
-            <div class="avatar">م</div>
-          </div>
-        </header>
-
-        <section class="welcome-row">
-          <div>
-            <p class="section-kicker">الخميس، 24 يوليو 2026</p>
-            <h1>صباح الخير، <span>محمد</span></h1>
-            <p class="welcome-note">كل أدواتك التنفيذية في مكان واحد. ماذا ننجز اليوم؟</p>
-          </div>
-          <a class="primary-action" href="#chat-panel"><span>＋</span> مهمة جديدة</a>
-        </section>
-
-        <section class="signal-grid" aria-label="حالة النظام">
-          <article class="signal-card signal-main">
-            <div class="signal-heading"><span class="signal-icon green">◉</span><span>حالة المنظومة</span><b>سليم</b></div>
-            <div class="signal-value">كل شيء يعمل <span>100%</span></div>
-            <div class="meter"><i style="width:100%"></i></div>
-            <small>آخر فحص منذ أقل من دقيقة</small>
-          </article>
-          <article class="signal-card"><div class="signal-heading"><span class="signal-icon blue">✦</span><span>Hermes</span><b class="quiet">متصل</b></div><strong>0</strong><small>مهام قيد التنفيذ</small></article>
-          <article class="signal-card"><div class="signal-heading"><span class="signal-icon violet">⌁</span><span>النماذج</span><b class="quiet">جاهزة</b></div><strong>6</strong><small>مسارات fallback نشطة</small></article>
-          <article class="signal-card"><div class="signal-heading"><span class="signal-icon orange">▣</span><span>صندوق الوارد</span><b class="quiet">محدّث</b></div><strong id="inbox-count">0</strong><small>نتيجة وملف محفوظ</small></article>
-        </section>
-
-        <section class="workspace-grid">
-          <article class="surface chat-surface" id="chat-panel">
-            <div class="surface-head">
-              <div class="title-with-icon"><span class="title-icon blue">✦</span><div><p class="section-kicker">المساعد التنفيذي</p><h2>تحدث مع Hermes</h2></div></div>
-              <span class="session-chip"><i></i> الجلسة نشطة</span>
-            </div>
-            <div class="chat-thread">
-              <div class="empty-chat"><span>✦</span><strong>كيف أساعدك اليوم؟</strong><p>أرسل مهمة، اطلب بحثًا، أو فوّض Hermes بتنفيذ عمل على بنيتك.</p></div>
-            </div>
-            <form class="composer" onsubmit="return false;">
-              <label class="sr-only" for="prompt-input">رسالتك</label>
-              <textarea id="prompt-input" placeholder="اكتب طلبك لـ Hermes..." rows="2"></textarea>
-              <div class="composer-footer"><span class="composer-hint">⌘ + Enter للإرسال</span><div class="composer-actions"><button class="attach-button" type="button" id="attach-btn">＋ إرفاق</button><button class="send-button" type="button" id="send-btn">إرسال <span>←</span></button></div></div>
-            </form>
-          </article>
-
-          <article class="surface inbox-surface" id="inbox-panel">
-            <div class="surface-head"><div class="title-with-icon"><span class="title-icon orange">▣</span><div><p class="section-kicker">مركز الملفات</p><h2>صندوق الوارد</h2></div></div><button class="more-button" type="button" onclick="document.getElementById('inbox-search').focus()">•••</button></div>
-            <div class="inbox-toolbar"><div class="inbox-tabs" role="tablist"><button class="tab-btn is-active" type="button" data-filter="all">الكل</button><button class="tab-btn" type="button" data-filter="files">ملفات</button><button class="tab-btn" type="button" data-filter="text">نصوص</button><button class="tab-btn" type="button" data-filter="upload">مرفوعات</button></div><input id="inbox-search" class="inbox-search" type="search" placeholder="ابحث في الوارد..." /></div>
-            <div class="inbox-list"><div class="inbox-loading">جاري تحميل الصندوق...</div></div>
-            <label class="upload-zone" for="upload-input"><input id="upload-input" type="file" multiple hidden /><span class="upload-plus">＋</span><span><strong>ارفع ملفًا إلى صندوقك</strong><small>اضغط للاختيار أو اسحب الملف هنا</small></span></label>
-          </article>
-        </section>
-
-        <section class="lower-grid">
-          <article class="surface flow-surface" id="workflow-panel">
-            <div class="surface-head"><div><p class="section-kicker">سير التنفيذ</p><h2>من الطلب إلى النتيجة</h2></div><span class="muted-label" id="workflow-state">لا توجد مهمة نشطة</span></div>
-            <form class="task-form" id="task-form">
-              <label for="task-title">عنوان المهمة</label><input id="task-title" name="title" value="تقرير حالة AgentHost" maxlength="200" />
-              <label for="task-prompt">المطلوب</label><textarea id="task-prompt" name="prompt" rows="3" required>أنشئ تقريراً قصيراً عن حالة خدمات AgentHost الحالية واحفظ النتيجة في صندوق الوارد.</textarea>
-              <button class="send-button" type="submit">تنفيذ المهمة <span>←</span></button>
-            </form>
-            <div class="timeline" id="workflow-timeline"><p class="muted-label">أرسل مهمة لعرض الأحداث الحقيقية.</p></div>
-            <div class="task-result" id="task-result" hidden></div>
-          </article>
-          <article class="surface architecture-surface"><div class="surface-head"><div><p class="section-kicker">البنية المتصلة</p><h2>خريطة الخدمات</h2></div><span class="muted-label">6 خدمات</span></div><div class="service-list"><div><i class="service-dot green"></i><span>Hermes Agent</span><small>8642 · API داخلي</small><b>سليم</b></div><div><i class="service-dot blue"></i><span>FreeLLM Gateway</span><small>3001 · fallback</small><b>سليم</b></div><div><i class="service-dot violet"></i><span>SearXNG</span><small>8888 · بحث داخلي</small><b>سليم</b></div><div><i class="service-dot orange"></i><span>Traefik + Authelia</span><small>الدومين · محمي</small><b>سليم</b></div></div></article>
-        </section>
-      </main>
-    </div>
-    <dialog id="item-dialog" class="cmd-dialog"><div class="cmd-form"><div class="cmd-head"><h3 id="item-dialog-title">تفاصيل العنصر</h3><button class="btn ghost" type="button" id="item-dialog-close">إغلاق</button></div><div id="item-dialog-body" class="resp-body"></div></div></dialog>
-    <script src="./app.js"></script>
-  </body>
-</html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07111f"><title>AgentHost Command Center</title>
+  <link rel="stylesheet" href="./styles.css"><link rel="stylesheet" href="./workflow.css"><link rel="stylesheet" href="./command-center.css">
+</head>
+<body>
+<div class="cc-shell">
+  <aside class="cc-rail"><a class="cc-brand" href="#home"><b>AH</b><span>AgentHost<br><small>Command Center</small></span></a>
+    <nav><a class="cc-nav active" href="#home" data-panel="home">⌂ <span>الرئيسية</span></a><a class="cc-nav" href="#tasks" data-panel="tasks">✓ <span>المهام</span></a><a class="cc-nav" href="#inbox" data-panel="inbox">▣ <span>الوارد</span></a><a class="cc-nav" href="#chat" data-panel="chat">✦ <span>Hermes</span></a><a class="cc-nav" href="#knowledge" data-panel="knowledge">⌘ <span>المعرفة</span></a><a class="cc-nav" href="#services" data-panel="services">◉ <span>الخدمات</span></a></nav>
+    <div class="cc-rail-foot"><i></i><span>بيانات حقيقية فقط</span></div>
+  </aside>
+  <main class="cc-main">
+    <header class="cc-top"><div><span class="eyebrow">AGENTHOST / CONTROL</span><h1 id="page-title">مركز القيادة</h1></div><div class="cc-live"><i></i><span id="global-health">جارٍ التحقق</span></div></header>
+    <section class="cc-panel active" id="panel-home" data-panel-content="home"><div class="cc-hero"><div><span class="eyebrow">الحالة التشغيلية</span><h2>كل ما يدور حول وكيلك<br><em>في مكان واحد.</em></h2><p>مهام، نتائج، معرفة، وخدمات مرتبطة بمصادرها الفعلية.</p></div><button class="cc-primary" data-action="new-task">＋ مهمة جديدة</button></div>
+      <div class="cc-metrics" id="home-metrics"></div><div class="cc-grid"><section class="cc-card"><div class="cc-card-head"><div><span class="eyebrow">آخر المهام</span><h3>نشاط التنفيذ</h3></div><a href="#tasks" data-panel="tasks">عرض الكل</a></div><div id="home-tasks" class="cc-list"></div></section><section class="cc-card"><div class="cc-card-head"><div><span class="eyebrow">الوارد الموحد</span><h3>آخر النتائج</h3></div><a href="#inbox" data-panel="inbox">عرض الكل</a></div><div id="home-inbox" class="cc-list"></div></section></div><section class="cc-card"><div class="cc-card-head"><div><span class="eyebrow">الأحداث الحقيقية</span><h3>آخر النشاط</h3></div><span class="cc-source">/api/tasks + events</span></div><div id="home-events" class="cc-events"></div></section>
+    </section>
+    <section class="cc-panel" id="panel-tasks" data-panel-content="tasks"><div class="cc-section-head"><div><span class="eyebrow">TASKS</span><h2>المهام</h2></div><button class="cc-primary" data-action="new-task">＋ إنشاء مهمة</button></div><div id="tasks-list" class="cc-task-grid"></div></section>
+    <section class="cc-panel" id="panel-inbox" data-panel-content="inbox"><div class="cc-section-head"><div><span class="eyebrow">ARTIFACTS</span><h2>صندوق الوارد</h2></div><input id="inbox-search" class="cc-input" placeholder="ابحث في النتائج..."/></div><div id="inbox-list" class="cc-artifact-grid"></div></section>
+    <section class="cc-panel" id="panel-chat" data-panel-content="chat"><div class="cc-section-head"><div><span class="eyebrow">HERMES SESSION</span><h2>المحادثة</h2></div><span class="cc-source">دردشة مستقلة عن المهام</span></div><div class="cc-chat"><div id="chat-thread" class="cc-chat-thread"></div><textarea id="chat-input" placeholder="اكتب رسالتك إلى Hermes..."></textarea><button id="chat-send" class="cc-primary">إرسال</button></div></section>
+    <section class="cc-panel" id="panel-knowledge" data-panel-content="knowledge"><div class="cc-section-head"><div><span class="eyebrow">KNOWLEDGE</span><h2>المعرفة المترابطة</h2></div></div><div id="knowledge-state" class="cc-empty"></div></section>
+    <section class="cc-panel" id="panel-services" data-panel-content="services"><div class="cc-section-head"><div><span class="eyebrow">RUNTIME</span><h2>الخدمات</h2></div></div><div id="services-list" class="cc-service-grid"></div></section>
+  </main>
+</div>
+<dialog id="task-dialog" class="cc-dialog"><form method="dialog" id="task-form"><button class="cc-close">×</button><span class="eyebrow">NEW TASK</span><h2>مهمة جديدة</h2><label>العنوان<input id="task-title" required value="مهمة AgentHost"></label><label>المطلوب<textarea id="task-prompt" rows="5" required></textarea></label><button class="cc-primary" type="submit">بدء التنفيذ</button></form></dialog>
+<dialog id="detail-dialog" class="cc-dialog"><form method="dialog"><button class="cc-close">×</button><div id="detail-content"></div></form></dialog>
+<script src="./app.js"></script>
+</body></html>
