@@ -35,6 +35,7 @@ The Product Reset is committed on branch `ui-product-reset-20260724` at commit `
 | `/api/knowledge/graph` | HTTP 200; unavailable state preserved truthfully |
 | UI restart count | 0 after recreate |
 | Chromium mobile interaction suite | 13/13 PASS |
+| Chromium desktop interaction suite | 5/5 PASS |
 | UI-created acceptance task | completed; artifact created automatically |
 | UI failure and Retry acceptance | PASS; failed Run `run-c3bab6f38a1145f4`, retry Run `run-6aa654d30e26466d`, Artifact created |
 
